@@ -7,10 +7,10 @@ using User.API.Models;
 
 namespace User.API.Data
 {
-    public class UserContext:DbContext
+    public class AppUserContext:DbContext
     {
 
-        public UserContext(DbContextOptions<UserContext> options) :base(options)
+        public AppUserContext(DbContextOptions<AppUserContext> options) :base(options)
         {
 
         }
@@ -18,6 +18,7 @@ namespace User.API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AppUser>().ToTable("Users").HasKey(u => u.Id);
+            base.OnModelCreating(modelBuilder);
 
         }
 

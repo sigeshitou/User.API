@@ -27,10 +27,10 @@ namespace User.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<UserContext>(option => 
+            services.AddDbContext<AppUserContext>(option => 
                 option.UseMySQL(Configuration.GetConnectionString("MsqlUser")));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,8 +49,10 @@ namespace User.API
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                var userContext = scope.ServiceProvider.GetRequiredService<UserContext>();
-                if (userContext.Users.Any())
+                var userContext = scope.ServiceProvider.GetRequiredService<AppUserContext>();
+                userContext.Database.Migrate();
+
+                if (!userContext.Users.Any())
                 {
                     userContext.Users.Add(new AppUser() {Name = "sigeshitou"});
                     userContext.SaveChanges();
