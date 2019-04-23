@@ -18,7 +18,7 @@ namespace User.API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AppUser>().ToTable("Users").HasKey(u => u.Id);
-
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<AppUser> Users { get;set; }

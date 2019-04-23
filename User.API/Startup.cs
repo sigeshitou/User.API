@@ -27,8 +27,9 @@ namespace User.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddDbContext<UserContext>(option => 
-                option.UseMySQL(Configuration.GetConnectionString("MsqlUser")));
+                option.UseMySql(Configuration.GetConnectionString("MsqlUser")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -40,17 +41,20 @@ namespace User.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseMvc();
             IntitUserDataBase(app);
+            app.UseMvc();
+           
         }
 
         public void IntitUserDataBase(IApplicationBuilder app)
         {
-            using (var scope = app.ApplicationServices.CreateScope())
+            //using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
+                //scope.ServiceProvider.GetRequiredService<UserContext>().Database.Migrate();
                 var userContext = scope.ServiceProvider.GetRequiredService<UserContext>();
-                if (userContext.Users.Any())
+                userContext.Database.Migrate();
+                if (!userContext.Users.Any())
                 {
                     userContext.Users.Add(new AppUser() {Name = "sigeshitou"});
                     userContext.SaveChanges();
